@@ -114,6 +114,8 @@ namespace GSEmulator.Model
         {
             Players = new Player[MAX_PLAYERS_SIZE];
             Teams = new Team[MAX_TEAM_SIZE];
+            Teams[0] = new Team();
+            Teams[1] = new Team();
         }
 
         public Player[] GetPlayers()
