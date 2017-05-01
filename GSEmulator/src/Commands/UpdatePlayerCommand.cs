@@ -36,6 +36,7 @@ namespace GSEmulator.Commands
                 {
                     if (Player.GetFieldName(i) == mKey)
                     {
+                        Log.d("UpdatePlayerCommand", String.Format("Executing key  {0} at {1} with '{0}'", mKey, i, mValue));
                         player.SetFieldValue(i, mValue);
                         break;
                     }
