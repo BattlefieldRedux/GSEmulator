@@ -1,4 +1,5 @@
 ﻿using GSEmulator.Model;
+using GSEmulator.Util;
 using System;
 using System.Linq;
 using System.Text;
@@ -14,8 +15,10 @@ namespace GSEmulator.Commands
         //	key \00 value \0A
         public UpdateHeaderCommand(string[] tokens) : base()
         {
-            if (tokens.Length != 2)
+            if (tokens.Length != 2) {
+                Log.e("UpdateHeaderCommand", "Called UpdateHeaderCommand w/ wrong arguments");
                 throw new ArgumentOutOfRangeException("UpdateHeaderCommand expects 2 tokens '<key> <value>'");
+            }
 
             mKey = tokens[0];
             mValue = tokens[1];

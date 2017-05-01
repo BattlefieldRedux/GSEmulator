@@ -1,4 +1,5 @@
 ﻿using GSEmulator.Model;
+using GSEmulator.Util;
 using System;
 
 
@@ -12,7 +13,11 @@ namespace GSEmulator.Commands
         public RemovePlayerCommand(string[] tokens)
         {
             if (tokens.Length != 2)
+            {
+                Log.e("RemovePlayerCommand", "Called RemovePlayerCommand w/ wrong arguments");
                 throw new ArgumentOutOfRangeException("RemovePlayerCommand expects 2 tokens 'player_r <id>'");
+            }
+               
 
             mPlayerIdx = Int32.Parse(tokens[1]);
         }

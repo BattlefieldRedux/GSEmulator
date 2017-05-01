@@ -1,4 +1,5 @@
 ﻿using GSEmulator.Model;
+using GSEmulator.Util;
 using System;
 
 namespace GSEmulator.Commands
@@ -14,7 +15,11 @@ namespace GSEmulator.Commands
         public AddPlayerCommand(string[] tokens)
         {
             if (tokens.Length != 4)
+            {
+                Log.e("AddPlayerCommand", "Called AddPlayerCommand w/ wrong arguments");
                 throw new ArgumentOutOfRangeException("AddPlayerCommand expects 4 tokens 'player_a <id> <name> <pid>'");
+            }
+                
 
             mPlayerIdx = Int32.Parse(tokens[1]);
             mName = tokens[2];

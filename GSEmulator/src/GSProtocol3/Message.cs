@@ -2,6 +2,7 @@
 using System.IO;
 using System.Text;
 using System.Linq;
+using GSEmulator.Util;
 
 namespace GSEmulator.GSProtocol3
 {
@@ -18,7 +19,10 @@ namespace GSEmulator.GSProtocol3
         public Message(byte[] timestamp)
         {
             if (timestamp.Length != 4)
+            {
+                Log.e("Message", "Timestamp needs to be exactly 4 bytes");
                 throw new ArgumentOutOfRangeException("Timestamp needs to be exactly 4 bytes");
+            }
 
             // Initializes a new non-resizable
             mPack = new byte[MAX_SIZE];

@@ -1,5 +1,6 @@
 ﻿using System;
 using GSEmulator.Model;
+using GSEmulator.Util;
 
 namespace GSEmulator.Commands
 {
@@ -13,7 +14,10 @@ namespace GSEmulator.Commands
         public UpdatePlayerCommand(string[] tokens)
         {
             if (tokens.Length != 4)
+            {
+                Log.e("UpdatePlayerCommand", "Called UpdatePlayerCommand w/ wrong arguments");
                 throw new ArgumentOutOfRangeException("UpdatePlayerCommand expects 4 tokens 'player_u <id> <key> <value>'");
+            }
 
             mPlayerIdx = Int32.Parse(tokens[1]);
             mKey = tokens[2];

@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="src\util\Log.cs" />
     <Compile Include="src\Commands\AddPlayerCommand.cs" />
     <Compile Include="src\Commands\Command.cs" />
     <Compile Include="src\Commands\UpdatePlayerCommand.cs" />

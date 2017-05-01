@@ -1,4 +1,5 @@
 ﻿using GSEmulator.Model;
+using GSEmulator.Util;
 using System;
 using System.Collections.Generic;
 
@@ -10,6 +11,7 @@ namespace GSEmulator.GSProtocol3
         private List<Message> mMessages;
         private Message mMessage;
         private byte[] mTimeStamp;
+        private readonly string TAG = "Encoder";
 
         public Encoder(Server server, byte[] timestamp)
         {
@@ -46,6 +48,7 @@ namespace GSEmulator.GSProtocol3
                     newMessage();
             }
 
+            Log.d(TAG, "Server encoded!");
             mMessage.Index = (byte)mMessages.Count;
             mMessages.Add(mMessage);
             mMessage.IsLast = true;
@@ -54,7 +57,8 @@ namespace GSEmulator.GSProtocol3
 
         private void newMessage()
         {
-            Console.WriteLine("newMessage");
+ 
+            Log.d(TAG, "newMessage");
             if (mMessage != null)
             {
 
@@ -67,14 +71,14 @@ namespace GSEmulator.GSProtocol3
 
         private bool EncodeHeaders(ref int headerIdx)
         {
-            Console.WriteLine("EncodeHeaders");
+            Log.d(TAG, "EncodeHeaders"); 
             mMessage.put((byte)Message.TYPE_HEADERS);
 
             for (; headerIdx < Server.NumFields; headerIdx++)
             {
                 var field = Server.GetFieldName(headerIdx);
                 var value = mServer.GetField(headerIdx);
-                Console.WriteLine(String.Format(" {0} => {1}", field, value));
+                Log.d(TAG, String.Format(" {0} => {1}", field, value));
 
                 if (mMessage.put(field) != field.Length || mMessage.put(0) != 1)
                     return false;
@@ -88,7 +92,7 @@ namespace GSEmulator.GSProtocol3
 
         private bool EncodePlayers(ref int playerIdx, ref int fieldIdx)
         {
-            Console.WriteLine("EncodPlayers");
+            Log.d(TAG, "EncodePlayers");
             mMessage.put((byte)Message.TYPE_PLAYERS);
 
             var players = mServer.GetPlayers();
@@ -119,7 +123,7 @@ namespace GSEmulator.GSProtocol3
 
         private bool EncodeTeams(ref int teamIdx, ref int fieldIdx)
         {
-            Console.WriteLine("EncodTeams");
+            Log.d(TAG, "EncodeTeams");
             mMessage.put((byte)Message.TYPE_TEAM);
 
             var players = mServer.GetTeams();
