@@ -8,16 +8,26 @@ namespace GSEmulator.Commands
 {
     class UpdatePlayerCommand : Command
     {
-        int PlayerID;
-        string Field;
-        string Value;
+        private string mKey;
+        private string mValue;
 
-        public UpdatePlayerCommand(string[] tokens) : base() {
+        //	key \00 value \0A
+        public UpdatePlayerCommand(string[] tokens) : base()
+        {
+            mKey = tokens[0];
+            mValue = tokens[1];
         }
 
         public override void Execute(ref Server server)
         {
-            throw new NotImplementedException();
+            for (int fieldIdx = 0; fieldIdx < Server.NumFields; fieldIdx++)
+            {
+                if (Server.GetFieldName(fieldIdx) == mKey)
+                {
+                    server.SetFieldValue(fieldIdx, mValue);
+                    break;
+                }
+            }
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 
 namespace GSEmulator.Model
@@ -179,6 +180,61 @@ namespace GSEmulator.Model
             }
         }
 
+
+        public void SetFieldValue(int fieldIdx, string value)
+        {
+            switch (fieldIdx)
+            {
+                case 0: HostName = value; break;
+                case 1: GameName = value; break;
+                case 2: GameVersion = value; break;
+                case 3: MapName = value; break;
+                case 4: GameType = value; break;
+                case 5: GameVariant = value; break;
+                case 6: NumPlayers = UInt32.Parse(value); break;
+                case 7: MaxPlayers = UInt32.Parse(value); break;
+                case 8: GameMode = value; break;
+                case 9: Password = value == "1" ? true : false; break;
+                case 10: TimeLimit = UInt32.Parse(value); ; break;
+                case 11: RoundTime = UInt32.Parse(value); ; break;
+                case 12: HostPort = UInt32.Parse(value); ; break;
+                case 13: Dedicated = value == "1" ? true : false; break;
+                case 14: Ranked = value == "1" ? true : false; break;
+                case 15: AntiCheat = value == "1" ? true : false; break;
+                case 16: OS = value; break;
+                case 17: BattleRecorder = value == "1" ? true : false; break;
+                case 18: BRIndex = value; break;
+                case 19: BRDownload = value; break;
+                case 20: Voip = value == "1" ? true : false; break;
+                case 21: AutoBalance = value == "1" ? true : false; break;
+                case 22: FriendlyFire = value == "1" ? true : false; break;
+                case 23: TKMode = value; break;
+                case 24: StartDelay = UInt32.Parse(value); ; break;
+                case 25: SpawnTime = float.Parse(value); break;
+                case 26: ServerText = value; break;
+                case 27: ServerLogo = value; break;
+                case 28: CommunityWebsite = value; break;
+                case 29: ScoreLimit = UInt32.Parse(value); break;
+                case 30: TicketRatio = UInt32.Parse(value); break;
+                case 31: TeamRatio = UInt32.Parse(value); break;
+                case 32: Team1Name = value; break;
+                case 33: Team2Name = value; break;
+                case 34: CoopEnabled = value == "1" ? true : false; break;
+                case 35: Pure = value == "1" ? true : false; break;
+                case 36: MapSize = UInt32.Parse(value); break;
+                case 37: Unlocks = value == "1" ? true : false; break;
+                case 38: Fps = UInt32.Parse(value); break;
+                case 39: Plasma = value == "1" ? true : false; break;
+                case 40: ReservedSlots = UInt32.Parse(value); break;
+                case 41: CoopBotRatio = UInt32.Parse(value); break;
+                case 42: CoopBotCount = UInt32.Parse(value); break;
+                case 43: CoopBotDifficulty = UInt32.Parse(value); break;
+                case 44: NoVehicles = value == "1" ? true : false; break;
+            }
+        }
+
+
+
         public static string GetFieldName(int field)
         {
             switch (field)
@@ -228,7 +284,6 @@ namespace GSEmulator.Model
                 case 42: return BOT_COUNT;
                 case 43: return BOT_DIFFICULTY;
                 case 44: return NO_VEHICLES;
-
                 default: return "";
             }
         }
