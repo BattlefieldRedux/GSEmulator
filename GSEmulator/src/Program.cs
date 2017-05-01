@@ -12,14 +12,19 @@ namespace GSEmulator
 {
     class Program
     {
-        static Server server = EncoderTests.CreateServer(75);
-
-        static ReaderWriterLockSlim mutex = new ReaderWriterLockSlim();
-        static UdpClient endPoint = new UdpClient( 21995 );
+        static Server server;
+        static ReaderWriterLockSlim mutex;
+        static UdpClient endPoint;
 
         static void Main(string[] args)
         {
-            Console.WriteLine("Starting emulator at door {0}", 21995);
+            if (args.Length != 1)
+                throw new ArgumentOutOfRangeException("Expects one argumemnt, specifing the port that it will listen from");
+
+            int lPort = Int32.Parse(args[0]);
+            server = new Server();
+            mutex = new ReaderWriterLockSlim();
+            endPoint = new UdpClient(lPort);
 
             for (int i = 0; i < 5; i++)
             {
@@ -27,10 +32,10 @@ namespace GSEmulator
                 thread.Start();
             }
 
+            Console.WriteLine("GSEmulator ready at door {0}!", lPort);
             for (string line = Console.ReadLine(); ; line = Console.ReadLine())
             {
                 Command command = Parser.Parse(line);
-
 
                 try
                 {
@@ -41,7 +46,6 @@ namespace GSEmulator
                 finally { mutex.ExitWriteLock(); }
             }
         }
-
 
         static void ReporterWorker()
         {
