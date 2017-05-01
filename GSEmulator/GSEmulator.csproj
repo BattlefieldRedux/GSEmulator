@@ -45,7 +45,7 @@
   <ItemGroup>
     <Compile Include="src\Commands\AddPlayerCommand.cs" />
     <Compile Include="src\Commands\Command.cs" />
-    <Compile Include="src\Commands\UpdateHeaderCommand.cs" />
+    <Compile Include="src\Commands\UpdatePlayerCommand.cs" />
     <Compile Include="src\Commands\RemovePlayerCommand.cs" />
     <Compile Include="src\GSProtocol3\Encoder.cs" />
     <Compile Include="src\GSProtocol3\EncoderTests.cs" />
@@ -56,7 +56,7 @@
     <Compile Include="src\Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="src\model\Server.cs" />
-    <Compile Include="src\Commands\UpdatePlayerCommand.cs" />
+    <Compile Include="src\Commands\UpdateHeaderCommand.cs" />
     <Compile Include="src\Commands\VoidCommand.cs" />
   </ItemGroup>
   <ItemGroup>

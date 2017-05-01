@@ -1,31 +1,40 @@
-﻿using GSEmulator.Model;
-using System;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
+using GSEmulator.Model;
 
 namespace GSEmulator.Commands
 {
     class UpdatePlayerCommand : Command
     {
+        private int mPlayerIdx;
         private string mKey;
         private string mValue;
 
-        //	key \00 value \0A
-        public UpdatePlayerCommand(string[] tokens) : base()
+        // player_u \00 <id> \00 <key> \00 <value> \0A
+        public UpdatePlayerCommand(string[] tokens)
         {
-            mKey = tokens[0];
-            mValue = tokens[1];
+            if (tokens.Length != 4)
+                throw new ArgumentOutOfRangeException("UpdatePlayerCommand expects 4 tokens 'player_u <id> <key> <value>'");
+
+            mPlayerIdx = Int32.Parse(tokens[1]);
+            mKey = tokens[2];
+            mValue = tokens[3];
         }
 
         public override void Execute(ref Server server)
         {
-            for (int fieldIdx = 0; fieldIdx < Server.NumFields; fieldIdx++)
+            var players = server.GetPlayers();
+
+            if (players.Length > mPlayerIdx)
             {
-                if (Server.GetFieldName(fieldIdx) == mKey)
+                Player player = players[mPlayerIdx];
+
+                for (int i = 0; i < Player.NumFields; i++)
                 {
-                    server.SetFieldValue(fieldIdx, mValue);
-                    break;
+                    if (Player.GetFieldName(i) == mKey)
+                    {
+                        player.SetFieldValue(i, mValue);
+                        break;
+                    }
                 }
             }
         }
