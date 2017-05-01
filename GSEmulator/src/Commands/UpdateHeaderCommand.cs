@@ -14,7 +14,7 @@ namespace GSEmulator.Commands
         //	key \00 value \0A
         public UpdateHeaderCommand(string[] tokens) : base()
         {
-            if (tokens.Length != 4)
+            if (tokens.Length != 2)
                 throw new ArgumentOutOfRangeException("UpdateHeaderCommand expects 2 tokens '<key> <value>'");
 
             mKey = tokens[0];
