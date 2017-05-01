@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-
+using System.Linq;
 namespace GSEmulator.Model
 {
     class Server
@@ -69,7 +69,13 @@ namespace GSEmulator.Model
         public string MapName { get; set; }
         public string GameType { get; set; }
         public uint MapSize { get; set; }
-        public uint NumPlayers { get; set; }
+        public uint NumPlayers
+        {
+            get
+            {
+                return (uint)this.Players.Count((p) => { return p != null; });
+            }
+        }
         public uint MaxPlayers { get; set; }
         public uint ReservedSlots { get; set; }
         public string GameMode { get; set; }
@@ -193,7 +199,7 @@ namespace GSEmulator.Model
                 case 3: MapName = value; break;
                 case 4: GameType = value; break;
                 case 5: GameVariant = value; break;
-                case 6: NumPlayers = UInt32.Parse(value); break;
+                //case 6: NumPlayers = UInt32.Parse(value); break;
                 case 7: MaxPlayers = UInt32.Parse(value); break;
                 case 8: GameMode = value; break;
                 case 9: Password = value == "1" ? true : false; break;

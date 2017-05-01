@@ -18,7 +18,7 @@ namespace GSEmulator.GSProtocol3
             server.MapName = "Asad Khal";
             server.GameType = "gpm_cq";
             server.MapSize = 16;
-            server.NumPlayers = players;
+            //server.NumPlayers = players;
             server.MaxPlayers = 100;
             server.ReservedSlots = 0;
             server.GameMode = "openplaying";
