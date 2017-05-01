@@ -21,14 +21,13 @@ namespace GSEmulator
         {
             Console.WriteLine("Starting emulator at door {0}", 21995);
 
-
             for (int i = 0; i < 5; i++)
             {
                 Thread thread = new Thread(new ThreadStart(ReporterWorker));
                 thread.Start();
             }
 
-            for (String line = Console.ReadLine(); ; line = Console.ReadLine())
+            for (string line = Console.ReadLine(); ; line = Console.ReadLine())
             {
                 Command command = Parser.Parse(line);
 

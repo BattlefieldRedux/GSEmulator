@@ -6,6 +6,9 @@ namespace GSEmulator.Model
     class Server
     {
         public static readonly int NumFields = 45;
+        private static readonly int MAX_PLAYERS_SIZE = 100;
+        private static readonly int MAX_TEAM_SIZE = 2;
+
         public const string HOST_NAME = "hostname";
         public const string GAME_NAME = "gamename";
         public const string GAME_VERSION = "gamever";
@@ -102,21 +105,22 @@ namespace GSEmulator.Model
         public uint CoopBotCount { get; set; }
         public uint CoopBotDifficulty { get; set; }
         public bool NoVehicles { get; set; }
-        public List<Player> Players;
-        public List<Team> Teams;
+        public Player[] Players;
+        public Team[] Teams;
+
 
         public Server()
         {
-            Players = new List<Player>();
-            Teams = new List<Team>();
+            Players = new Player[MAX_PLAYERS_SIZE];
+            Teams = new Team[MAX_TEAM_SIZE];
         }
 
-        public List<Player> GetPlayers()
+        public Player[] GetPlayers()
         {
             return Players;
         }
 
-        public List<Team> GetTeams()
+        public Team[] GetTeams()
         {
             return Teams;
         }

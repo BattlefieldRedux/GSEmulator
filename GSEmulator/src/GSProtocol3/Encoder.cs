@@ -103,7 +103,7 @@ namespace GSEmulator.GSProtocol3
                     return false;
 
 
-                for (; playerIdx < players.Count; playerIdx++)
+                for (; playerIdx < players.Length; playerIdx++)
                 {
                     var value = players[playerIdx].GetField(fieldIdx);
 
@@ -133,7 +133,7 @@ namespace GSEmulator.GSProtocol3
                     return false;
 
 
-                for (; teamIdx < players.Count; teamIdx++)
+                for (; teamIdx < players.Length; teamIdx++)
                 {
                     var value = players[teamIdx].GetField(fieldIdx);
 

@@ -68,14 +68,12 @@ namespace GSEmulator.GSProtocol3
                 Score = 0
             };
 
-            server.GetTeams().Add(team1);
-            server.GetTeams().Add(team2);
+            server.GetTeams()[0] = team1;
+            server.GetTeams()[1] = team2;
 
             for (int i = 0; i < players; i++) {
-                Player player = new Player()
+                Player player = new Player("Name" + i, (uint)100000958)
                 {
-                    Name = "Name" + i, 
-                    Pid = (uint)100000958,
                     IsBot = false,
                     Team = (uint) (i < 35 ? 1 : 2),
                     Kills = 2,
@@ -84,7 +82,7 @@ namespace GSEmulator.GSProtocol3
                     Ping = 23
                 };
 
-                server.GetPlayers().Add(player);
+                server.GetPlayers()[i] = player;
             }
 
             return server;

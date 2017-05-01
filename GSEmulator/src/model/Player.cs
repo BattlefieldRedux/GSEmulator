@@ -18,14 +18,21 @@ namespace GSEmulator.Model
         public static readonly string PID_KEY = "pid_";
         public static readonly string AIBot_KEY = "AIBot_";
 
-        public string Name { get; set; }
-        public uint Pid { get; set; }
+        public string Name { get; private set; }
+        public uint Pid { get; private set; }
         public bool IsBot { get; set; }
         public int Score { get; set; }
         public uint Kills { get; set; }
         public uint Deaths { get; set; }
         public uint Team { get; set; }
         public uint Ping { get; set; }
+
+
+        public Player(string name, uint pid) {
+            Name = name;
+            Pid = pid;
+        }
+
 
         public string GetField(int field)
         {
