@@ -13,6 +13,9 @@ namespace GSEmulator.Commands
         // player_a \00 <id> \00 <name> \00 <pid> \0A
         public AddPlayerCommand(string[] tokens)
         {
+            if (tokens.Length != 4)
+                throw new ArgumentOutOfRangeException("AddPlayerCommand expects 4 tokens 'player_a <id> <name> <pid>'");
+
             mPlayerIdx = Int32.Parse(tokens[1]);
             mName = tokens[2];
             mPid = UInt32.Parse(tokens[3]);

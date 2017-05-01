@@ -59,6 +59,37 @@ namespace GSEmulator.Model
             }
         }
 
+        public void SetFieldValue(int fieldIdx, string value)
+        {
+            switch (fieldIdx)
+            {
+                case 0:
+                    Name = value;
+                    break;
+                case 1:
+                    Score = Int32.Parse(value);
+                    break;
+                case 2:
+                    Ping = UInt32.Parse(value);
+                    break;
+                case 3:
+                    Team = UInt32.Parse(value);
+                    break;
+                case 4:
+                    Deaths = UInt32.Parse(value);
+                    break;
+                case 5:
+                    Pid = UInt32.Parse(value);
+                    break;
+                case 6:
+                    Kills = UInt32.Parse(value);
+                    break;
+                case 7:
+                    IsBot = value == "1" ? true : false;
+                    break;
+            }
+        }
+
         public static string GetFieldName(int field)
         {
             switch (field)
