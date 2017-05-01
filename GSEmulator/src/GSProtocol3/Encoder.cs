@@ -57,7 +57,7 @@ namespace GSEmulator.GSProtocol3
 
         private void newMessage()
         {
- 
+
             Log.d(TAG, "newMessage");
             if (mMessage != null)
             {
@@ -71,7 +71,7 @@ namespace GSEmulator.GSProtocol3
 
         private bool EncodeHeaders(ref int headerIdx)
         {
-            Log.d(TAG, "EncodeHeaders"); 
+            Log.d(TAG, "EncodeHeaders");
             mMessage.put((byte)Message.TYPE_HEADERS);
 
             for (; headerIdx < Server.NumFields; headerIdx++)
@@ -83,7 +83,10 @@ namespace GSEmulator.GSProtocol3
                 if (mMessage.put(field) != field.Length || mMessage.put(0) != 1)
                     return false;
 
-                if (mMessage.put(value) != value.Length || mMessage.put(0) != 1)
+                if (value != null && mMessage.put(value) != value.Length)
+                    return false;
+
+                if (mMessage.put(0) != 1)
                     return false;
             }
 
@@ -109,9 +112,15 @@ namespace GSEmulator.GSProtocol3
 
                 for (; playerIdx < players.Length; playerIdx++)
                 {
+                    if (players[playerIdx] == null)
+                        continue;
+
                     var value = players[playerIdx].GetField(fieldIdx);
 
-                    if (mMessage.put(value) != value.Length || mMessage.put(0) != 1)
+                    if (value != null && mMessage.put(value) != value.Length)
+                        return false;
+
+                    if (mMessage.put(0) != 1)
                         return false;
                 }
 
@@ -136,12 +145,14 @@ namespace GSEmulator.GSProtocol3
                 if (mMessage.put((byte)teamIdx) != 1)
                     return false;
 
-
                 for (; teamIdx < players.Length; teamIdx++)
                 {
                     var value = players[teamIdx].GetField(fieldIdx);
 
-                    if (mMessage.put(value) != value.Length || mMessage.put(0) != 1)
+                    if (value != null && mMessage.put(value) != value.Length)
+                        return false;
+
+                    if (mMessage.put(0) != 1)
                         return false;
                 }
 
