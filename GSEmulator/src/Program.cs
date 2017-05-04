@@ -20,16 +20,27 @@ namespace GSEmulator
 
         static void Main(string[] args)
         {
-            if (args.Length != 1)
+            if (args.Length != 2)
             {
-                Log.e(TAG, "Program started with wrong argumens");
-                throw new ArgumentOutOfRangeException("Expects one argumemnt, specifing the port that it will listen from");
+                Log.e(TAG, "Program started with wrong arguments: Wrong amount of args");
+                throw new ArgumentOutOfRangeException("Expects two argumemnts, specifing the ip and port that it will listen from");
             }
 
-            int lPort = Int32.Parse(args[0]);
+            IPAddress ip;
+            if(!IPAddress.TryParse(args[0], out ip )) {
+                Log.e( TAG, "Program started with wrong arguments: Ip invalid" );
+                throw new ArgumentException( "Ip invalid." );
+            }
+
+            ushort lPort;
+            if (!ushort.TryParse( args[1], out lPort )) {
+                Log.e( TAG, "Program started with wrong arguments: Port invalid" );
+                throw new ArgumentException( "Port invalid." );
+            }
+
             server = new Server();
             mutex = new ReaderWriterLockSlim();
-            endPoint = new UdpClient(lPort);
+            endPoint = new UdpClient(new IPEndPoint(ip, lPort));
 
             for (int i = 0; i < 5; i++)
             {
