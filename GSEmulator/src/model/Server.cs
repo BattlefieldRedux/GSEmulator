@@ -1,13 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+
 namespace GSEmulator.Model
 {
     class Server
     {
         public static readonly int NumFields = 45;
-        private static readonly int MAX_PLAYERS_SIZE = 100;
+        private static readonly int MAX_PLAYER_INDEX = 255; // the maximum index value a player may have
         private static readonly int MAX_TEAM_SIZE = 2;
 
         public const string HOST_NAME = "hostname";
@@ -18,7 +18,7 @@ namespace GSEmulator.Model
         public const string GAME_VARIANT = "gamevariant";
         public const string NUM_PLAYERS = "numplayers";
         public const string MAX_PLAYERS = "maxplayers";
-        public const string GAME_MODE = "gamemode";
+        public const string GAME_MODE = "gamemode";                 // eg: openplaying
         public const string PASSWORD = "password";
         public const string TIME_LIMIT = "timelimit";
         public const string ROUND_TIME = "roundtime";
@@ -118,7 +118,7 @@ namespace GSEmulator.Model
 
         public Server()
         {
-            Players = new Player[MAX_PLAYERS_SIZE];
+            Players = new Player[MAX_PLAYER_INDEX];
             Teams = new Team[MAX_TEAM_SIZE];
             Teams[0] = new Team();
             Teams[1] = new Team();
