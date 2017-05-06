@@ -38,7 +38,7 @@ namespace GSEmulator
                 throw new ArgumentException( "Port invalid." );
             }
 
-            server = new Server();
+            server = createDefaultPRServer();
             mutex = new ReaderWriterLockSlim();
             endPoint = new UdpClient(new IPEndPoint(ip, lPort));
 
@@ -94,5 +94,17 @@ namespace GSEmulator
                 }
             }
         }
+
+
+        static Server createDefaultPRServer()
+        {
+            Server server = new Server();
+            server.HostName = "A PR Server";
+            server.GameName = "battlefield2";
+            server.GameVersion = "1.5.3153-802.0";      // Well game won't get any more updates, so this will be the same forever and ever
+            server.GameMode = "openplaying";            // BF2 always replies with "openplaying"
+            return server;
+        }
+
     }
 }
