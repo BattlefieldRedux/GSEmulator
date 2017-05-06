@@ -28,7 +28,7 @@ namespace GSEmulator.Commands
         {
             var players = server.GetPlayers();
 
-            if (players.Length > mPlayerIdx)
+            if (players.Length > mPlayerIdx && players[mPlayerIdx] != null)
             {
                 Player player = players[mPlayerIdx];
 
