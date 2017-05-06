@@ -72,7 +72,7 @@ namespace GSEmulator.GSProtocol3
             server.GetTeams()[1] = team2;
 
             for (int i = 0; i < players; i++) {
-                Player player = new Player("Name" + i, (uint)100000958)
+                Player player = new Player("Name" + i, (uint)100000958, false)
                 {
                     IsBot = false,
                     Team = (uint) (i < 35 ? 1 : 2),

@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GSEmulator.Model
 {
@@ -28,9 +24,10 @@ namespace GSEmulator.Model
         public uint Ping { get; set; }
 
 
-        public Player(string name, uint pid) {
+        public Player(string name, uint pid, bool isbot) {
             Name = name;
             Pid = pid;
+            IsBot = isbot;
         }
 
 
