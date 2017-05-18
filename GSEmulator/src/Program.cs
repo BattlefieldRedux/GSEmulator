@@ -7,13 +7,14 @@ using System.Net.Sockets;
 using System.Net;
 using System.Linq;
 using System.Collections.Generic;
-using GSEmulator.Util;
+using NLog;
 
 namespace GSEmulator
 {
     class Program
     {
-        static readonly string TAG = "Program";
+        private static Logger LOGGER = LogManager.GetCurrentClassLogger();
+
         static Server server;
         static ReaderWriterLockSlim mutex;
         static UdpClient endPoint;
@@ -48,18 +49,19 @@ namespace GSEmulator
                 thread.Start();
             }
 
-            Log.d(TAG, String.Format("GSEmulator ready at door {0}!", lPort));
+            LOGGER.Debug("GSEmulator ready at door {0}!", lPort);
             for (string line = Console.ReadLine(); ; line = Console.ReadLine())
             {
-                Log.d(TAG, String.Format("Parsing: '{0}'", line));
+                LOGGER.Debug("Parsing: '{0}'", line);
                 Command command = Parser.Parse(line);
                 try
                 {
                     mutex.EnterWriteLock();
                     command.Execute(ref server);
                 }
-                catch (Exception ex){
-                    Log.w(TAG, ex.ToString());
+                catch (Exception ex)
+                {
+                    LOGGER.Warn( ex.ToString());
                 }
                 finally { mutex.ExitWriteLock(); }
             }
@@ -69,27 +71,30 @@ namespace GSEmulator
         {
             IPEndPoint RemoteIpEndPoint = new IPEndPoint(IPAddress.Any, 0);
             byte[] datagram;
-            while ( (datagram = endPoint.Receive(ref RemoteIpEndPoint)) != null ) {
-                Log.d(TAG, String.Format("Received request from {0}:{1}", RemoteIpEndPoint.Address, RemoteIpEndPoint.Port));
+            while ((datagram = endPoint.Receive(ref RemoteIpEndPoint)) != null)
+            {
+                LOGGER.Debug("Received request from {0}:{1}", RemoteIpEndPoint.Address, RemoteIpEndPoint.Port);
 
                 byte[] timestamp = datagram.Skip(3).Take(4).ToArray();
- 
+
                 try
                 {
-                   
+
                     mutex.EnterReadLock();
                     Encoder encoder = new Encoder(server, timestamp);
                     List<Message> messages = encoder.Encode(true, true, true);
                     mutex.ExitReadLock();
 
-                    foreach (Message msg in messages) {
+                    foreach (Message msg in messages)
+                    {
                         var reply = msg.GetBytes();
-                        Log.d(TAG, String.Format("Sending reply to {0}:{1}", RemoteIpEndPoint.Address, RemoteIpEndPoint.Port));
+                        LOGGER.Debug("Sending reply to {0}:{1}", RemoteIpEndPoint.Address, RemoteIpEndPoint.Port);
                         endPoint.Send(reply, reply.Length, RemoteIpEndPoint);
                     }
                 }
-                catch (Exception ex){
-                    Log.w(TAG, ex.ToString());
+                catch (Exception ex)
+                {
+                    LOGGER.Warn(ex.ToString());
                     mutex.ExitReadLock();
                 }
             }

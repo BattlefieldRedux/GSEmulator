@@ -1,5 +1,5 @@
 ﻿using GSEmulator.Model;
-using GSEmulator.Util;
+using NLog;
 using System;
 
 
@@ -7,6 +7,8 @@ namespace GSEmulator.Commands
 {
     class RemovePlayerCommand : Command
     {
+        private static Logger LOGGER = LogManager.GetCurrentClassLogger();
+
         private int mPlayerIdx;
 
         // player_r \00 <id> \0A
@@ -14,7 +16,7 @@ namespace GSEmulator.Commands
         {
             if (tokens.Length != 2)
             {
-                Log.e("RemovePlayerCommand", "Called RemovePlayerCommand w/ wrong arguments");
+                LOGGER.Fatal("Called RemovePlayerCommand w/ wrong arguments");
                 throw new ArgumentOutOfRangeException("RemovePlayerCommand expects 2 tokens 'player_r <id>'");
             }
                

@@ -1,11 +1,13 @@
 ﻿using System;
 using GSEmulator.Model;
-using GSEmulator.Util;
+using NLog;
 
 namespace GSEmulator.Commands
 {
     class UpdatePlayerCommand : Command
     {
+        private static Logger LOGGER = LogManager.GetCurrentClassLogger();
+
         private int mPlayerIdx;
         private string mKey;
         private string mValue;
@@ -15,7 +17,7 @@ namespace GSEmulator.Commands
         {
             if (tokens.Length != 4)
             {
-                Log.e("UpdatePlayerCommand", "Called UpdatePlayerCommand w/ wrong arguments");
+                LOGGER.Fatal("Called UpdatePlayerCommand w/ wrong arguments");
                 throw new ArgumentOutOfRangeException("UpdatePlayerCommand expects 4 tokens 'player_u <id> <key> <value>'");
             }
 
@@ -36,7 +38,7 @@ namespace GSEmulator.Commands
                 {
                     if (Player.GetFieldName(i) == mKey)
                     {
-                        Log.d("UpdatePlayerCommand", String.Format("Executing key  {0} at {1} with '{0}'", mKey, i, mValue));
+                        LOGGER.Debug("Executing key  {0} at {1} with '{0}'", mKey, i, mValue);
                         player.SetFieldValue(i, mValue);
                         break;
                     }

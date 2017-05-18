@@ -2,12 +2,13 @@
 using System.IO;
 using System.Text;
 using System.Linq;
-using GSEmulator.Util;
+using NLog;
 
 namespace GSEmulator.GSProtocol3
 {
     class Message
     {
+        private static Logger LOGGER = LogManager.GetCurrentClassLogger();
         public static readonly int MAX_SIZE = 1400;
         public static readonly int TYPE_HEADERS = 0;
         public static readonly int TYPE_PLAYERS = 1;
@@ -20,7 +21,7 @@ namespace GSEmulator.GSProtocol3
         {
             if (timestamp.Length != 4)
             {
-                Log.e("Message", "Timestamp needs to be exactly 4 bytes");
+                LOGGER.Fatal("Timestamp needs to be exactly 4 bytes");
                 throw new ArgumentOutOfRangeException("Timestamp needs to be exactly 4 bytes");
             }
 

@@ -1,5 +1,5 @@
 ﻿using GSEmulator.Model;
-using GSEmulator.Util;
+using NLog;
 using System;
 
 namespace GSEmulator.Commands
@@ -7,6 +7,7 @@ namespace GSEmulator.Commands
 
     class AddPlayerCommand : Command
     {
+        private static Logger LOGGER = LogManager.GetCurrentClassLogger();
         private string mName;
         private uint mPid;
         private int mPlayerIdx;
@@ -17,7 +18,7 @@ namespace GSEmulator.Commands
         {
             if (tokens.Length != 5)
             {
-                Log.e("AddPlayerCommand", "Called AddPlayerCommand w/ wrong arguments");
+                LOGGER.Fatal("Called AddPlayerCommand w/ wrong arguments");
                 throw new ArgumentOutOfRangeException("AddPlayerCommand expects 4 tokens 'player_a <id> <name> <pid> <isBot>'");
             }
 
