@@ -7,7 +7,7 @@ namespace GSEmulator.Model
     class Server
     {
         public static readonly int NumFields = 45;
-        private static readonly int MAX_PLAYER_INDEX = 255; // the maximum index value a player may have
+        private static readonly int MAX_PLAYER_INDEX = 256; // the maximum index value a player may have
         private static readonly int MAX_TEAM_SIZE = 2;
 
         public const string HOST_NAME = "hostname";
