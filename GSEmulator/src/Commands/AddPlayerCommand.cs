@@ -25,7 +25,7 @@ namespace GSEmulator.Commands
             mPlayerIdx = Int32.Parse(tokens[1]);
             mName = tokens[2];
             mPid = UInt32.Parse(tokens[3]);
-            mIsBot = tokens[3] == "1";
+            mIsBot = tokens[4] == "1";
         }
 
         public override void Execute(ref Server server)
