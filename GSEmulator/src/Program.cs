@@ -23,20 +23,25 @@ namespace GSEmulator
         {
             if (args.Length != 2)
             {
-                Log.e(TAG, "Program started with wrong arguments: Wrong amount of args");
-                throw new ArgumentOutOfRangeException("Expects two argumemnts, specifing the ip and port that it will listen from");
+                LOGGER.Fatal("Program started with wrong arguments: Wrong amount of args");
+                Environment.Exit(-1);
+                return;
             }
 
             IPAddress ip;
-            if(!IPAddress.TryParse(args[0], out ip )) {
-                Log.e( TAG, "Program started with wrong arguments: Ip invalid" );
-                throw new ArgumentException( "Ip invalid." );
+            if (!IPAddress.TryParse(args[0], out ip))
+            {
+                LOGGER.Fatal("Program started with wrong arguments: Ip invalid");
+                Environment.Exit(-1);
+                return;
             }
 
             ushort lPort;
-            if (!ushort.TryParse( args[1], out lPort )) {
-                Log.e( TAG, "Program started with wrong arguments: Port invalid" );
-                throw new ArgumentException( "Port invalid." );
+            if (!ushort.TryParse(args[1], out lPort))
+            {
+                LOGGER.Fatal("Program started with wrong arguments: Port invalid");
+                Environment.Exit(-1);
+                return;
             }
 
             server = createDefaultPRServer();
