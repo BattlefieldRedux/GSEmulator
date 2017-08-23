@@ -73,7 +73,8 @@ namespace GSEmulator.Model
         {
             get
             {
-                return (uint)this.Players.Count((p) => { return p != null; });
+                return (uint)this.Players
+                    .Count((p) =>  { return p != null && p.IsBot == false; });
             }
         }
         public uint MaxPlayers { get; set; }
