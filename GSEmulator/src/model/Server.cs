@@ -42,8 +42,8 @@ namespace GSEmulator.Model
         public const string SCORE_LIMIT = "bf2_scorelimit";
         public const string TICKET_RATIO = "bf2_ticketratio";
         public const string TEAM_RATIO = "bf2_teamratio";
-        public const string TEAM_1_NAME = "bf2_team1";
-        public const string TEAM_2_NAME = "bf2_team2";
+        public const string TEAM_1_NAME = "bf2_team1";                          // Opfor Team
+        public const string TEAM_2_NAME = "bf2_team2";                          // Blufor Team
         public const string BOTS = "bf2_bots";
         public const string PURE = "bf2_pure";
         public const string MAP_SIZE = "bf2_mapsize";
@@ -226,8 +226,8 @@ namespace GSEmulator.Model
                 case 29: ScoreLimit = UInt32.Parse(value); break;
                 case 30: TicketRatio = UInt32.Parse(value); break;
                 case 31: TeamRatio = UInt32.Parse(value); break;
-                case 32: Team1Name = value; break;
-                case 33: Team2Name = value; break;
+                case 32: this.Teams[0].Name = Team1Name = value; break;
+                case 33: this.Teams[1].Name = Team2Name = value; break;
                 case 34: CoopEnabled = value == "1" ? true : false; break;
                 case 35: Pure = value == "1" ? true : false; break;
                 case 36: MapSize = UInt32.Parse(value); break;
