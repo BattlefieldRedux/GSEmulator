@@ -1,6 +1,7 @@
 ﻿using GSEmulator.Model;
 using NLog;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace GSEmulator.GSProtocol3
 {
@@ -97,7 +98,11 @@ namespace GSEmulator.GSProtocol3
             LOGGER.Debug("EncodePlayers");
             mMessage.put((byte)Message.TYPE_PLAYERS);
 
-            var players = mServer.GetPlayers();
+            var players = mServer
+                            .GetPlayers()
+                            .Where((player) => player != null) // We convert our sparced array into a dense one
+                            .ToArray(); 
+
             for (; fieldIdx < Player.NumFields; playerIdx = 0, fieldIdx++)
             {
                 var field = Player.GetFieldName(fieldIdx);
@@ -111,9 +116,6 @@ namespace GSEmulator.GSProtocol3
 
                 for (; playerIdx < players.Length; playerIdx++)
                 {
-                    if (players[playerIdx] == null)
-                        continue;
-
                     var value = players[playerIdx].GetField(fieldIdx);
 
                     if (value != null && mMessage.put(value) != value.Length)
