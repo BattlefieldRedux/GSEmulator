@@ -123,6 +123,9 @@ namespace GSEmulator
             server.GameName = "battlefield2";
             server.GameVersion = "1.5.3153-802.0";      // Well game won't get any more updates, so this will be the same forever and ever
             server.GameMode = "openplaying";            // BF2 always replies with "openplaying"
+            server.OS = "win32";
+            server.TKMode = "Punish";
+            server.Fps = 36;
             return server;
         }
 
