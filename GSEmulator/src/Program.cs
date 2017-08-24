@@ -54,10 +54,10 @@ namespace GSEmulator
                 thread.Start();
             }
 
-            LOGGER.Debug("GSEmulator ready at door {0}!", lPort);
+            LOGGER.Info("GSEmulator ready at {0}:{1}!", ip.ToString(), lPort);
             for (string line = Console.ReadLine(); ; line = Console.ReadLine())
             {
-                LOGGER.Debug("Parsing: '{0}'", line);
+                LOGGER.Trace("Parsing: '{0}'", line);
                 Command command = Parser.Parse(line);
                 try
                 {
@@ -79,12 +79,21 @@ namespace GSEmulator
             while ((datagram = endPoint.Receive(ref RemoteIpEndPoint)) != null)
             {
                 LOGGER.Debug("Received request from {0}:{1}", RemoteIpEndPoint.Address, RemoteIpEndPoint.Port);
+                LOGGER.Trace("Received request: {0}", BitConverter.ToString(datagram));
 
+                // Its GSDiverter's job to make sure only good requests are diverted to us
+                if (datagram.Length < 7) {
+                    LOGGER.Warn("Received request with invalid size");
+                    continue;
+                }
+
+
+                // A normal request: FE FD 00 XX XX XX XX AA BB CC 00
+                // Where the XX is the timestamp we want
                 byte[] timestamp = datagram.Skip(3).Take(4).ToArray();
 
                 try
                 {
-
                     mutex.EnterReadLock();
                     Encoder encoder = new Encoder(server, timestamp);
                     List<Message> messages = encoder.Encode(true, true, true);
@@ -94,6 +103,7 @@ namespace GSEmulator
                     {
                         var reply = msg.GetBytes();
                         LOGGER.Debug("Sending reply to {0}:{1}", RemoteIpEndPoint.Address, RemoteIpEndPoint.Port);
+                        LOGGER.Trace("Sending reply: {0}", BitConverter.ToString(reply));
                         endPoint.Send(reply, reply.Length, RemoteIpEndPoint);
                     }
                 }

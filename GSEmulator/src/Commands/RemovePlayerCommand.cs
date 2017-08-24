@@ -16,7 +16,6 @@ namespace GSEmulator.Commands
         {
             if (tokens.Length != 2)
             {
-                LOGGER.Fatal("Called RemovePlayerCommand w/ wrong arguments");
                 throw new ArgumentOutOfRangeException("RemovePlayerCommand expects 2 tokens 'player_r <id>'");
             }
                
@@ -27,8 +26,10 @@ namespace GSEmulator.Commands
         public override void Execute(ref Server server)
         {
             var players = server.GetPlayers();
-            if (players.Length > mPlayerIdx)
+            if (players.Length > mPlayerIdx) {
                 players[mPlayerIdx] = null;
+                LOGGER.Debug("Removed player at index {0}", mPlayerIdx);
+            }
         }
     }
 }

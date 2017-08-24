@@ -57,12 +57,11 @@ namespace GSEmulator.GSProtocol3
 
         private void newMessage()
         {
+            LOGGER.Debug("Creating new message");
 
-            LOGGER.Debug("newMessage");
             if (mMessage != null)
             {
-
-                mMessage.Index = (byte)mMessages.Count;
+                mMessage.Index = (byte)mMessages.Count; // Update previous message index
                 mMessages.Add(mMessage);
             }
 
@@ -78,7 +77,7 @@ namespace GSEmulator.GSProtocol3
             {
                 var field = Server.GetFieldName(headerIdx);
                 var value = mServer.GetField(headerIdx);
-                LOGGER.Debug(" {0} => {1}", field, value);
+                LOGGER.Trace(" {0} => {1}", field, value);
 
                 if (mMessage.put(field) != field.Length || mMessage.put(0) != 1)
                     return false;

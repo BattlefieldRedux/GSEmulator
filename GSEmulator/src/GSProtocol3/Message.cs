@@ -21,7 +21,6 @@ namespace GSEmulator.GSProtocol3
         {
             if (timestamp.Length != 4)
             {
-                LOGGER.Fatal("Timestamp needs to be exactly 4 bytes");
                 throw new ArgumentOutOfRangeException("Timestamp needs to be exactly 4 bytes");
             }
 

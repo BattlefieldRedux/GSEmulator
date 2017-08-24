@@ -18,7 +18,6 @@ namespace GSEmulator.Commands
         public UpdateHeaderCommand(string[] tokens) : base()
         {
             if (tokens.Length != 2) {
-                LOGGER.Fatal("Called UpdateHeaderCommand w/ wrong arguments");
                 throw new ArgumentOutOfRangeException("UpdateHeaderCommand expects 2 tokens '<key> <value>'");
             }
 
@@ -32,7 +31,7 @@ namespace GSEmulator.Commands
             {
                 if (Server.GetFieldName(fieldIdx) == mKey)
                 {
-                    LOGGER.Debug("Executing key  {0} at {1} with '{0}'", mKey, fieldIdx, mValue);
+                    LOGGER.Debug("Updating header '{0}' with '{1}'", mKey, mValue);
                     server.SetFieldValue(fieldIdx, mValue);
                     break;
                 }

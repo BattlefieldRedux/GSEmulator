@@ -8,7 +8,7 @@ namespace GSEmulator.Commands
 
         public override void Execute(ref Server server)
         {
-            // Dop Nothins
+            // Do Nothing
         }
     }
 }
