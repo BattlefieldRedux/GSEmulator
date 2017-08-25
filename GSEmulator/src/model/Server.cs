@@ -177,12 +177,12 @@ namespace GSEmulator.Model
                 case 35: return (Pure ? 1 : 0).ToString();
                 case 36: return MapSize.ToString();
                 case 37: return (Unlocks ? 1 : 0).ToString();
-                case 38: return "";// Fps.ToString();
+                case 38: return Fps.ToString();
                 case 39: return (Plasma ? 1 : 0).ToString();
                 case 40: return ReservedSlots.ToString();
-                case 41: return "";// CoopBotRatio.ToString();
-                case 42: return "";//CoopBotCount.ToString();
-                case 43: return ""; // CoopBotDifficulty.ToString();
+                case 41: return CoopBotRatio.ToString();
+                case 42: return CoopBotCount.ToString();
+                case 43: return CoopBotDifficulty.ToString();
                 case 44: return (NoVehicles ? 1 : 0).ToString();
                 default:
                     return "";
