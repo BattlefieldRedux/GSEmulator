@@ -7,8 +7,14 @@ namespace GSEmulator
     {
 
        public static Command Parse(String line) {
+            
+            if(string.IsNullOrEmpty(line))
+                return new VoidCommand();
 
-            String[] tokens = line.Split((char)0x00);
+            string[] tokens = line.Split((char)0x00);
+
+            if( string.IsNullOrEmpty(tokens[0]))
+                return new VoidCommand();
 
             switch (tokens[0])
             {

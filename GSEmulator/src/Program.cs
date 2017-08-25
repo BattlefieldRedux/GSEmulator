@@ -57,10 +57,11 @@ namespace GSEmulator
             LOGGER.Info("GSEmulator ready at {0}:{1}!", ip.ToString(), lPort);
             for (string line = Console.ReadLine(); ; line = Console.ReadLine())
             {
-                LOGGER.Trace("Parsing: '{0}'", line);
-                Command command = Parser.Parse(line);
                 try
                 {
+                    LOGGER.Trace("Parsing: '{0}'", line);
+                    Command command = Parser.Parse(line);
+
                     mutex.EnterWriteLock();
                     command.Execute(ref server);
                 }
@@ -68,7 +69,7 @@ namespace GSEmulator
                 {
                     LOGGER.Warn( ex.ToString());
                 }
-                finally { mutex.ExitWriteLock(); }
+                finally { if(mutex.IsWriteLockHeld) mutex.ExitWriteLock(); }
             }
         }
 
@@ -110,7 +111,8 @@ namespace GSEmulator
                 catch (Exception ex)
                 {
                     LOGGER.Warn(ex.ToString());
-                    mutex.ExitReadLock();
+                    if(mutex.IsReadLockHeld)
+                        mutex.ExitReadLock();
                 }
             }
         }
