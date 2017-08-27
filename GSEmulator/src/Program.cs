@@ -51,11 +51,12 @@ namespace GSEmulator
             for (int i = 0; i < 5; i++)
             {
                 Thread thread = new Thread(new ThreadStart(ReporterWorker));
+                thread.IsBackground = false;  // make sure no thread keeps working even if this reached the end
                 thread.Start();
             }
 
             LOGGER.Info("GSEmulator ready at {0}:{1}!", ip.ToString(), lPort);
-            for (string line = Console.ReadLine(); ; line = Console.ReadLine())
+            for (string line = Console.ReadLine(); line != null; line = Console.ReadLine())
             {
                 try
                 {
@@ -71,49 +72,71 @@ namespace GSEmulator
                 }
                 finally { if(mutex.IsWriteLockHeld) mutex.ExitWriteLock(); }
             }
+
+
+            LOGGER.Warn("Python PIPE was closed");
+
+            // Closing UDP Client
+            // Causes worker threads to exit their while loop
+            endPoint.Close();
+
+            LOGGER.Info("GSEmulator is shuting down...");
         }
 
         static void ReporterWorker()
         {
             IPEndPoint RemoteIpEndPoint = new IPEndPoint(IPAddress.Any, 0);
             byte[] datagram;
-            while ((datagram = endPoint.Receive(ref RemoteIpEndPoint)) != null)
+
+
+            try
             {
-                LOGGER.Debug("Received request from {0}:{1}", RemoteIpEndPoint.Address, RemoteIpEndPoint.Port);
-                LOGGER.Trace("Received request: {0}", BitConverter.ToString(datagram));
-
-                // Its GSDiverter's job to make sure only good requests are diverted to us
-                if (datagram.Length < 7) {
-                    LOGGER.Warn("Received request with invalid size");
-                    continue;
-                }
-
-
-                // A normal request: FE FD 00 XX XX XX XX AA BB CC 00
-                // Where the XX is the timestamp we want
-                byte[] timestamp = datagram.Skip(3).Take(4).ToArray();
-
-                try
+                while ((datagram = endPoint.Receive(ref RemoteIpEndPoint)) != null)
                 {
-                    mutex.EnterReadLock();
-                    Encoder encoder = new Encoder(server, timestamp);
-                    List<Message> messages = encoder.Encode(true, true, true);
-                    mutex.ExitReadLock();
+                    LOGGER.Debug("Received request from {0}:{1}", RemoteIpEndPoint.Address, RemoteIpEndPoint.Port);
+                    LOGGER.Trace("Received request: {0}", BitConverter.ToString(datagram));
 
-                    foreach (Message msg in messages)
+                    // Its GSDiverter's job to make sure only good requests are diverted to us
+                    if (datagram.Length < 7)
                     {
-                        var reply = msg.GetBytes();
-                        LOGGER.Debug("Sending reply to {0}:{1}", RemoteIpEndPoint.Address, RemoteIpEndPoint.Port);
-                        LOGGER.Trace("Sending reply: {0}", BitConverter.ToString(reply));
-                        endPoint.Send(reply, reply.Length, RemoteIpEndPoint);
+                        LOGGER.Warn("Received request with invalid size");
+                        continue;
+                    }
+
+
+                    // A normal request: FE FD 00 XX XX XX XX AA BB CC 00
+                    // Where the XX is the timestamp we want
+                    byte[] timestamp = datagram.Skip(3).Take(4).ToArray();
+
+                    try
+                    {
+                        mutex.EnterReadLock();
+                        Encoder encoder = new Encoder(server, timestamp);
+                        List<Message> messages = encoder.Encode(true, true, true);
+                        mutex.ExitReadLock();
+
+                        foreach (Message msg in messages)
+                        {
+                            var reply = msg.GetBytes();
+                            LOGGER.Debug("Sending reply to {0}:{1}", RemoteIpEndPoint.Address, RemoteIpEndPoint.Port);
+                            LOGGER.Trace("Sending reply: {0}", BitConverter.ToString(reply));
+                            endPoint.Send(reply, reply.Length, RemoteIpEndPoint);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        LOGGER.Warn(ex.ToString());
+                        if (mutex.IsReadLockHeld)
+                            mutex.ExitReadLock();
                     }
                 }
-                catch (Exception ex)
-                {
-                    LOGGER.Warn(ex.ToString());
-                    if(mutex.IsReadLockHeld)
-                        mutex.ExitReadLock();
-                }
+            }
+            catch
+            {
+                // We'll always end here when endpoint.close() is called
+            }
+            finally {
+                LOGGER.Debug("Stopping reporter worker");
             }
         }
 
@@ -130,6 +153,5 @@ namespace GSEmulator
             server.Fps = 36;
             return server;
         }
-
     }
 }
