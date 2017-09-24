@@ -21,9 +21,12 @@ namespace GSEmulator
 
         static void Main(string[] args)
         {
+
+            LOGGER.Info("Starting GSEmulator with following arguments: {0}", string.Join(", ", args));
+
             if (args.Length != 2)
             {
-                LOGGER.Fatal("Program started with wrong arguments: Wrong amount of args");
+                LOGGER.Fatal("Program started with wrong arguments: Expexted 2 got {0}", args.Length);
                 Environment.Exit(-1);
                 return;
             }
@@ -31,7 +34,7 @@ namespace GSEmulator
             IPAddress ip;
             if (!IPAddress.TryParse(args[0], out ip))
             {
-                LOGGER.Fatal("Program started with wrong arguments: Ip invalid");
+                LOGGER.Fatal("Program started with wrong arguments: Ip invalid got '{0}'", args[0]);
                 Environment.Exit(-1);
                 return;
             }
@@ -39,19 +42,29 @@ namespace GSEmulator
             ushort lPort;
             if (!ushort.TryParse(args[1], out lPort))
             {
-                LOGGER.Fatal("Program started with wrong arguments: Port invalid");
+                LOGGER.Fatal("Program started with wrong arguments: Port invalid got '{0}'", args[1]);
                 Environment.Exit(-1);
                 return;
             }
 
             server = createDefaultPRServer();
             mutex = new ReaderWriterLockSlim();
-            endPoint = new UdpClient(new IPEndPoint(ip, lPort));
+            try
+            {
+                endPoint = new UdpClient(new IPEndPoint(ip, lPort));
+            }
+            catch (Exception ex) {
+                LOGGER.Fatal("Unable to create UDP listener: " + ex.Message);
+                Environment.Exit(-1);
+                return;
+            }
 
             for (int i = 0; i < 5; i++)
             {
-                Thread thread = new Thread(new ThreadStart(ReporterWorker));
-                thread.IsBackground = false;  // make sure no thread keeps working even if this reached the end
+                Thread thread = new Thread(new ThreadStart(ReporterWorker))
+                {
+                    IsBackground = false  // make sure no thread keeps working even if this reached the end
+                };
                 thread.Start();
             }
 
