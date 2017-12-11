@@ -55,6 +55,7 @@
     <Compile Include="src\GSProtocol3\EncoderTests.cs" />
     <Compile Include="src\GSProtocol3\Message.cs" />
     <Compile Include="src\model\Team.cs" />
+    <Compile Include="src\Options.cs" />
     <Compile Include="src\Parser.cs" />
     <Compile Include="src\model\Player.cs" />
     <Compile Include="src\Program.cs" />

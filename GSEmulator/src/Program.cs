@@ -21,48 +21,25 @@ namespace GSEmulator
 
         static void Main(string[] args)
         {
+            Options options;
 
-            LOGGER.Info("Starting GSEmulator with following arguments: {0}", string.Join(", ", args));
-
-            if (args.Length != 3)
+            try
             {
-                LOGGER.Fatal("Program started with wrong arguments: Expexted 2 got {0}", args.Length);
+                options = Options.FromCommandLine(args);
+            }
+            catch(Options.ParsingException ex)
+            {
+                LOGGER.Fatal(ex.Message);
+                LOGGER.Info(Options.ShowUsage());
                 Environment.Exit(-1);
                 return;
             }
-
-            IPAddress ip;
-            if (!IPAddress.TryParse(args[0], out ip))
-            {
-                LOGGER.Fatal("Program started with wrong arguments: Ip invalid got '{0}'", args[0]);
-                Environment.Exit(-1);
-                return;
-            }
-
-            ushort lPort;
-            if (!ushort.TryParse(args[1], out lPort))
-            {
-                LOGGER.Fatal("Program started with wrong arguments: Port invalid got '{0}'", args[1]);
-                Environment.Exit(-1);
-                return;
-            }
-
-            ushort bf2Port;
-            if (!ushort.TryParse(args[2], out bf2Port))
-            {
-                LOGGER.Fatal("Program started with wrong arguments: Battlefield 2 query port invalid got '{0}'", args[2]);
-                Environment.Exit(-1);
-                return;
-            }
-
-
-            IPAddress bf2IP = IPAddress.Loopback;
 
             server = createDefaultPRServer();
             mutex = new ReaderWriterLockSlim();
             try
             {
-                endPoint = new UdpClient(new IPEndPoint(ip, lPort));
+                endPoint = new UdpClient(new IPEndPoint(options.EmulatorIP, options.EmulatorPort));
             }
             catch (Exception ex)
             {
@@ -73,14 +50,14 @@ namespace GSEmulator
 
             for (int i = 0; i < 5; i++)
             {
-                Thread thread = new Thread(() => ReporterWorker(bf2IP, bf2Port))
+                Thread thread = new Thread(() => ReporterWorker(options.BattlefieldIP, options.BattlefieldPort))
                 {
                     IsBackground = false  // make sure no thread keeps working even if this reached the end
                 };
                 thread.Start();
             }
 
-            LOGGER.Info("GSEmulator ready at {0}:{1}!", ip.ToString(), lPort);
+            LOGGER.Info("GSEmulator ready at {0}:{1}!", options.EmulatorIP.ToString(), options.EmulatorPort);
             for (string line = Console.ReadLine(); line != null; line = Console.ReadLine())
             {
                 try
