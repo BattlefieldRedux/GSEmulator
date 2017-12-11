@@ -24,7 +24,7 @@ namespace GSEmulator
 
             LOGGER.Info("Starting GSEmulator with following arguments: {0}", string.Join(", ", args));
 
-            if (args.Length != 2)
+            if (args.Length != 3)
             {
                 LOGGER.Fatal("Program started with wrong arguments: Expexted 2 got {0}", args.Length);
                 Environment.Exit(-1);
@@ -47,13 +47,25 @@ namespace GSEmulator
                 return;
             }
 
+            ushort bf2Port;
+            if (!ushort.TryParse(args[2], out bf2Port))
+            {
+                LOGGER.Fatal("Program started with wrong arguments: Battlefield 2 query port invalid got '{0}'", args[2]);
+                Environment.Exit(-1);
+                return;
+            }
+
+
+            IPAddress bf2IP = IPAddress.Loopback;
+
             server = createDefaultPRServer();
             mutex = new ReaderWriterLockSlim();
             try
             {
                 endPoint = new UdpClient(new IPEndPoint(ip, lPort));
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 LOGGER.Fatal("Unable to create UDP listener: " + ex.Message);
                 Environment.Exit(-1);
                 return;
@@ -61,7 +73,7 @@ namespace GSEmulator
 
             for (int i = 0; i < 5; i++)
             {
-                Thread thread = new Thread(new ThreadStart(ReporterWorker))
+                Thread thread = new Thread(() => ReporterWorker(bf2IP, bf2Port))
                 {
                     IsBackground = false  // make sure no thread keeps working even if this reached the end
                 };
@@ -81,9 +93,9 @@ namespace GSEmulator
                 }
                 catch (Exception ex)
                 {
-                    LOGGER.Warn( ex.ToString());
+                    LOGGER.Warn(ex.ToString());
                 }
-                finally { if(mutex.IsWriteLockHeld) mutex.ExitWriteLock(); }
+                finally { if (mutex.IsWriteLockHeld) mutex.ExitWriteLock(); }
             }
 
 
@@ -96,7 +108,12 @@ namespace GSEmulator
             LOGGER.Info("GSEmulator is shuting down...");
         }
 
-        static void ReporterWorker()
+        /// <summary>
+        /// Worker thread to handle the connections
+        /// </summary>
+        /// <param name="bf2IP"></param>
+        /// <param name="bf2Port"></param>
+        static void ReporterWorker(IPAddress bf2IP, int bf2Port)
         {
             IPEndPoint RemoteIpEndPoint = new IPEndPoint(IPAddress.Any, 0);
             byte[] datagram;
@@ -109,10 +126,16 @@ namespace GSEmulator
                     LOGGER.Debug("Received request from {0}:{1}", RemoteIpEndPoint.Address, RemoteIpEndPoint.Port);
                     LOGGER.Trace("Received request: {0}", BitConverter.ToString(datagram));
 
-                    // Its GSDiverter's job to make sure only good requests are diverted to us
-                    if (datagram.Length < 7)
+                    // If its not valid redirect to battlefield 2
+                    if (!IsPacketValid(datagram))
                     {
-                        LOGGER.Warn("Received request with invalid size");
+
+#if !NOPROXY
+                        LOGGER.Debug("Redirecting request to BF2 server - {0}:{1}", bf2IP, bf2Port);
+                        ProxyTo(datagram, RemoteIpEndPoint, bf2IP, bf2Port);
+#else
+                        LOGGER.Warn("Received invalid message");
+#endif
                         continue;
                     }
 
@@ -148,9 +171,63 @@ namespace GSEmulator
             {
                 // We'll always end here when endpoint.close() is called
             }
-            finally {
+            finally
+            {
                 LOGGER.Debug("Stopping reporter worker");
             }
+        }
+
+        /// <summary>
+        /// Creates a temporary proxy between the client and the game server.
+        /// </summary>
+        /// <param name="datagram">The initial datagram that the client sent</param>
+        /// <param name="remoteIpEndPoint">The ip from where the datagram originates from</param>
+        /// <param name="bf2IP">the IPAddress of the server that we're proxing to</param>
+        /// <param name="bf2Port">the port of the server that we're proxing to</param>
+        private static void ProxyTo(byte[] datagram, IPEndPoint remoteIpEndPoint, IPAddress bf2IP, int bf2Port)
+        {
+            using (UdpClient redirect = new UdpClient())
+            {
+                IPEndPoint bf2Server = new IPEndPoint(bf2IP, bf2Port);
+                // Redirects request to bf2 server
+
+                redirect.Send(datagram, datagram.Length, bf2Server);
+
+                byte[] serverReply;
+                // Receive from bf2 server
+                while ((serverReply = redirect.Receive(ref bf2Server)) != null)
+                {
+                    // redirects bf2 response to client
+                    LOGGER.Trace("Redirecting response from game to client: {0}", BitConverter.ToString(serverReply));
+                    endPoint.Send(serverReply, serverReply.Length, remoteIpEndPoint);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Checks if the received UDP datagram is a Gamespy's Query Request that should be processed by this emulator.
+        /// </summary>
+        /// <param name="datagram">The UDP payload</param>
+        /// <returns>True if the given payload is a Gamespy's Query Request</returns>
+        private static bool IsPacketValid(byte[] datagram)
+        {
+            // Needs to have 11 bytes; no more no less
+            if (datagram.Length != 11)
+                return false;
+
+            // Needs to start with 0xFE
+            if (datagram[0] != 0xFE)
+                return false;
+
+            // Second byte needs to be 0xFD
+            if (datagram[1] != 0xFD)
+                return false;
+
+            //11th byte needs to have least significate byte to 1
+            if ((datagram[10] & 1) != 1)
+                return false;
+
+            return true;
         }
 
 
