@@ -6,7 +6,7 @@ Clients query the game server as usual but these UDP packets get intercepted and
 
 ## Installation
 ### Windows
-In windows the intercepting part is done with [GSDiverter](https://github.com/UTurista/GSDiverter).
+In windows the intercepting part is done with [GSDiverter](https://github.com/realitymod/GSDiverter).
 
 ### Linux
 In Linux, the interception can be done using iptables:
