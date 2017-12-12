@@ -6,9 +6,9 @@ namespace GSEmulator
     class Options
     {
         public IPAddress EmulatorIP { get; private set; }
-        public short EmulatorPort { get; private set; }
+        public int EmulatorPort { get; private set; }
         public IPAddress BattlefieldIP { get; private set; }
-        public short BattlefieldPort { get; private set; }
+        public int BattlefieldPort { get; private set; }
 
 
         private Options()
@@ -19,15 +19,10 @@ namespace GSEmulator
 
         public static Options FromCommandLine(string[] args)
         {
-            if (args.Length != 3)
-            {
-                throw new ParsingException("Program started with wrong arguments: Expexted 2 got {0}", args.Length);
-            }
-
             IPAddress emulatorIP = IPAddress.Loopback;
-            short emulatorPort = -1;
+            int emulatorPort = -1;
             IPAddress battlefieldIP = IPAddress.Loopback;
-            short battlefieldPort = -1;
+            int battlefieldPort = -1;
 
             // Parse the commands
             for (int i = 0; i < args.Length; i += 2)
@@ -46,12 +41,13 @@ namespace GSEmulator
                         break;
 
                     case "-port":
-                        if (!short.TryParse(value, out emulatorPort))
+                        if (!int.TryParse(value, out emulatorPort))
                         {
                             throw new ParsingException("Invalid Port: '{0}'", value);
                         }
                         break;
 
+                    case "-bf2ip":
                     case "-bfip":
                         if (!IPAddress.TryParse(value, out battlefieldIP))
                         {
@@ -59,8 +55,9 @@ namespace GSEmulator
                         }
                         break;
 
+                    case "-bf2port":
                     case "-bfport":
-                        if (!short.TryParse(value, out battlefieldPort))
+                        if (!int.TryParse(value, out battlefieldPort))
                         {
                             throw new ParsingException("Invalid Battlefield 2 Port: '{0}'", value);
                         }
